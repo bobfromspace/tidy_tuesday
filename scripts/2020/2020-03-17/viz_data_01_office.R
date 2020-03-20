@@ -1,5 +1,5 @@
 # ==========================================================================
-# make a graph of weighted average scores per season and the episodes
+# Make a plot of weighted average scores per season and the episodes
 # ==========================================================================
 library(dplyr)
 library(ggplot2)
@@ -9,7 +9,7 @@ library(extrafont)
 # Arrangements for the working space
 # --------------------------------------------------------------------------
 
-# needs to be ran just once
+# needs to be run just once
 # font_install('fontcm')
 
 # needs to be run once
@@ -51,8 +51,9 @@ wh_all <- inner_join(wh_ave_season, wh_best_ep, by = "season") %>%
 
 # palette: #91b6d4, #4e7ab2, #d6d8db, #29292a, #887b71
 
-loadfonts(device="win")
-windowsFonts()
+# The commented lines below help to choose the font for the plot, so they only need to be run once
+# loadfonts(device="win")
+# windowsFonts()
 
 ggplot(wh_all, aes(x = season, y = mean_rating,
 	label = round(mean_rating, 2))) +
@@ -60,11 +61,10 @@ ggplot(wh_all, aes(x = season, y = mean_rating,
 	coord_flip() +
 	labs(title = "What season of the Office is the best?",
 		subtitle = "Weighted average of episode ratings by votes on IMDB\n+ best episode in each season",
-		x = "Season",
 		caption = "Data: rfordatascience/tidytuesday (GitHub)\nVisualisation: @bob_from_space (Twitter)") +
 	geom_text(nudge_y = 0.4, family = "Courier New") +
 	annotate("text", x = wh_all$x_ann,
-		# the line below is making me sad :C
+		# the line below makes me sad :C
 		y = c(2, 1.7, 2.2, 2.45, 2.1, 1.65, 2.3, 1.9, 1.8),
 		label = paste0("bold('", wh_all$ep_name, "')"),
 		colour = "#29292a", family = "Courier New", parse = TRUE) +
