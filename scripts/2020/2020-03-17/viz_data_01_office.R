@@ -1,5 +1,5 @@
 # ==========================================================================
-# make a graph of wheighted average scores per season and the episodes
+# make a graph of weighted average scores per season and the episodes
 # ==========================================================================
 library(dplyr)
 library(ggplot2)
