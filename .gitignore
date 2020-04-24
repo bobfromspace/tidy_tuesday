@@ -1,3 +1,5 @@
-tidytuesday/*
+**/tidytuesday/
 */**/*.jpg
 */**/*.png
+*.jpg
+*.png
