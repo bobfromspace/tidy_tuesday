@@ -4,6 +4,8 @@
 library(data.table)
 library(ggplot2)
 library(extrafont)
+# check the latest version if you need to load {dplyr} too
+library(ggbump)
 
 # I like these colors: #FFE694, #E0A860, #26263B, #D4D1C7
 
@@ -92,9 +94,8 @@ price_df <- price_df[all_cats, on = c("price_cat", "prim_article")][
 # Plot: Fine amount for most common articles
 # --------------------------------------------------------------------------
 ggplot(price_df, aes(price_cat, art_order, group = prim_article)) +
+	geom_bump(aes(colour = prim_article), size = 1.5, alpha = 0.7) +
 	geom_point(aes(size = p_cases, colour = prim_article), shape = 19, alpha = 0.9) +
-	geom_line(aes(price_cat, art_order, colour = prim_article), size = 1.5,
-		alpha = 0.7) +
 	geom_text(aes(price_cat, art_order + 0.2, label = prim_article),
 		family = "Bahnschrift", colour = "#26263B") +
 	labs(title = "\nFine range for top 3 GDPR charges",
