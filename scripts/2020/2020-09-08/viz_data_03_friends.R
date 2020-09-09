@@ -133,6 +133,7 @@ barplot <- ggplot(link_dt, aes(x = N, y = pair, group = pair, colour = character
 
 ggsave("./viz/friends_viz03_02.png", plot = barplot, width = 7)
 
-out_plots <- donut + barplot
+out_plots <- donut + barplot +
+	plot_annotation(caption = "Data: rfordatascience/tidytuesday (GitHub)\nOriginal Viz: ceros.com\nReplication Viz: @bob_from_space (Twitter)")
 
 ggsave("./viz/friends_viz03_03.png", plot = out_plots, width = 12.5)
