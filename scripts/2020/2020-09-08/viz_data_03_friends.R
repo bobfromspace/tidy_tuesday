@@ -19,7 +19,6 @@ title <- "#0015FF"
 char_colours <- data.table(
 	speaker = c("Rachel Green", "Monica Geller", "Chandler Bing",
 		"Joey Tribbiani", "Phoebe Buffay", "Ross Geller"),
-	numb = c(1, 2, 3, 4, 5, 6),
 	colour = c("#FF797A", "#6BC9FF", "#4E0FCA", "#FFA040", "#7FC061",
 		"#000000"),
 	# after an hour of search in the source, I (luckily) succeeded in finding these pics
@@ -31,6 +30,16 @@ char_colours <- data.table(
 		"https://media-s3-us-east-1.ceros.com/editorial-content/images/2019/08/06/c8844c2c04b63d7c14f0d17d54b9625d/ross-copy.png")
 	)
 char_colours <- char_colours[, tidyr::separate(.SD, speaker, c("character", "second_name"), sep = " ", remove = FALSE)]
+
+theme_plot <- theme(
+	plot.background = element_rect(fill = background),
+	panel.background = element_rect(fill = background),
+	axis.title = element_blank(),
+	axis.ticks = element_blank(),
+	panel.grid = element_line(colour = background),
+	strip.background = element_blank(),
+	strip.text = element_blank()
+	)
 
 divide <- function(x) {
 	split <- strsplit(x, " ")
@@ -46,14 +55,14 @@ prep_dt <- dt[,previous_speaker := dplyr::lag(speaker), by = c("season", "episod
 	speaker != previous_speaker,][,
 	pair := {
 		sapply(1:length(speaker), function(cnt) Reduce(function(x, y) {paste(x, y, sep = " & ")}, sort(c(speaker[cnt], previous_speaker[cnt]))))
-		}, by = c("season", "episode", "scene")][,.N,by = "pair"][
-		order(-N), ]
+		}, by = c("season", "episode", "scene")][,
+		.N, by = "pair"][order(-N), ]
 
 dts <- lapply(char_colours$character, function(name) {
 	don_dt <- prep_dt[grep(name, pair),][,
 			partner := gsub(paste0(c(name, " ", "&"), collapse = "|"), "", pair)][
 			order(-N), perc := round(N / sum(N), 2)][, character := name]
-	don_dt <- char_colours[character == name, list(character, numb, image_links)][
+	don_dt <- char_colours[character == name, list(character, image_links)][
 	don_dt, on = "character"][,
 		ymax := cumsum(perc)][, ymin := c(0, head(ymax, n = -1))]
 	don_dt <- don_dt[char_colours[, list(character, colour)], on = c(partner = "character"), nomatch = 0]
@@ -76,16 +85,8 @@ donut <- ggplot(dts, aes(ymin = ymin, ymax = ymax, xmax = 4, xmin = 3)) +
 	geom_image(aes(x = -2, y = 0,
 		image = image_links), size = 0.69) +
 	facet_wrap(.~ character, ncol = 2) +
-	theme(
-		plot.background = element_rect(fill = background),
-		panel.background = element_rect(fill = background),
-		axis.text = element_blank(),
-		axis.title = element_blank(),
-		axis.ticks = element_blank(),
-		panel.grid = element_line(colour = background),
-		strip.background = element_blank(),
-		strip.text = element_blank()
-			)
+	theme_plot +
+	theme(axis.text = element_blank())
 
 ggsave("./viz/friends_viz03_01.png", plot = donut, width = 7, height = 10.5)
 
@@ -114,17 +115,11 @@ barplot <- ggplot(link_dt, aes(x = N, y = pair, group = pair, colour = character
 		fontface = "bold") +
 	xlim(c(0, max(link_dt$N) + 400)) +
 	ggtitle("Number of lines spoken between the characters:") +
+	theme_plot +
 	theme(
-		plot.background = element_rect(fill = background),
-		panel.background = element_rect(fill = background),
 		axis.text.x = element_blank(),
 		axis.text.y = element_text(colour = "black", family = "Arial",
 			face = "bold", size = 10),
-		axis.title = element_blank(),
-		axis.ticks = element_blank(),
-		panel.grid = element_line(colour = background),
-		strip.background = element_blank(),
-		strip.text = element_blank(),
 		legend.position = "none",
 		# hjust isn't stable, so to say - it depends on the width of the saved pic
 		plot.title = element_text(hjust = -1, colour = title,
