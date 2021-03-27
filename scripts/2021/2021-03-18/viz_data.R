@@ -67,7 +67,7 @@ ggsave(file.path("viz", paste0("viz_", Sys.Date(), ".png")), width = 9,
 	height = 7)
 
 #
-# My viz: Terraria (ine of my favourite game)
+# My viz: Terraria (one of my favourite games)
 # --------------------------------------------------------------------------
 levs <- c("January", "February", "March", "April", "May", "June", "July", "August", "September",
 	"October", "November", "December")
